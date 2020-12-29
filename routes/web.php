@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /** @var \Laravel\Lumen\Routing\Router $router */
 
 /*
@@ -13,11 +15,15 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+Route::get('/signin','LoginController@signin');
+Route::get('/signout','LoginController@signout');
+Route::get('/refreshToken','LoginController@reissueToken');
+
+
+Route::group(['prefix' => 'organicnom', 'middleware'=>'auth'] ,function () {
+    Route::get('/exercises/all','OrganicnomController@getAllExercises');
+    Route::get('/lessons/all','OrganicnomController@getAllLessons');
+    Route::get('/pointers/get','OrganicnomController@getPointers');
+    Route::post('/pointers/store','OrganicnomController@storePointers');
+
 });
-
-$router->post('/login','LoginController@login');
-
-$router->get('/test','LoginController@test');
-$router->get('/allLessons','OrganicnomController@getAllLessons');

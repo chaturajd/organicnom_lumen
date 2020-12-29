@@ -14,7 +14,7 @@ class JwtTokenHelper
     private $userId;
     private $appId;
 
-    function __construct($userId, $appId)
+    function __construct($userId = "", $appId = "")
     {
         $this->accessSecretKey = InMemory::plainText('accesskey');
         $this->refreshSecretKey = InMemory::plainText('refreshSecret');
@@ -22,6 +22,8 @@ class JwtTokenHelper
         $this->userId = $userId;
         $this->appId = $appId;
     }
+
+
 
     public function getAccessToken()
     {
@@ -52,5 +54,15 @@ class JwtTokenHelper
             ->getToken($this->configuration->signer(), $this->configuration->signingKey());
 
         return $token;
+    }
+
+    public function parse($token)
+    {
+        $this->configuration = Configuration::forSymmetricSigner(
+            new Sha256(),
+            $this->accessSecretKey
+        );
+
+        return $this->configuration->parser()->parse($token);
     }
 }
